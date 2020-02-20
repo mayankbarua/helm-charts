@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.configmap.name }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "back-end.labels" . | nindent 4 }}
+data:
+  RDS_CONNECTION_STRING: {{ .Values.configmap.RDS_CONNECTION_STRING }}
+  RDS_DB_NAME: {{ .Values.configmap.RDS_DB_NAME }}
+  S3_BUCKET_NAME: {{ .Values.configmap.S3_BUCKET_NAME }}
