@@ -9,7 +9,7 @@ namespace:
 replicaCount: 3
 
 image:
-  repository: frontendimage
+  repository:
   pullPolicy: IfNotPresent
 
 container:
@@ -29,7 +29,7 @@ resources:
 # http://backendLoadbalancerIP:3000  . This should be later extracted using the kubectl command
 configmap:
   name: env-config
-  backendIp: http://YOUR_BACKEND_LOADBALANCER_IP:3000
+  backendIp:
 
 secret:
   regcred:
