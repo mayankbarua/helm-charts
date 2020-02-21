@@ -11,14 +11,9 @@
 
 ## Run Helm Chart
 
-To create back-end replica set
+To create Frontend and Backend charts
 
 ```bash
-$ helm install RELEASENAME --set image.repository=baruamayank92/back-end:68d0d3ae99965283edb53a98e5b7295e8e4ddceb,namespace.createNamespace=true,configmap.RDS_CONNECTION_STRING=RDS_NAME  --debug ./back-end/
+$ ansible-playbook -vvv create_helm_charts.yml --extra-vars "backendReleaseName=value imageBackend=value rdsConnection=value bucketName=value awsKey=value secretKey=value imageFrontend=value frontendReleaseName=value"
 ```
 
-To create front-end replica set
-
-```bash
-$ helm install RELEASENAME --set image.repository=baruamayank92/front-end:68d0d3ae99965283edb53a98e5b7295e8e4ddceb,namespace.createNamespace=true,intiContainer.backendDependencyEndpoint=RELEASENAME-back-end.api.svc.cluster.local  --debug ./front-end/
-```

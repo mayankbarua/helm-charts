@@ -45,9 +45,10 @@ service:
 
 configmap:
   name: env-config
-  RDS_CONNECTION_STRING: RDS_NAME
+  RDS_CONNECTION_STRING:
   RDS_DB_NAME: thunderstorm
-  S3_BUCKET_NAME: webapp-images
+  S3_BUCKET_NAME:
+  REGION: us-east-1
 
 secret:
   regcred:
@@ -59,6 +60,11 @@ secret:
     type: Opaque
     username: Y3N5ZTczNzRtYXN0ZXI=
     password: Y3N5ZTczNzRwYXNzd29yZA==
+  awscred:
+    name: awscred
+    type: Opaque
+    aws_key:
+    secret_key:
 
 
 

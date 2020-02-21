@@ -9,3 +9,4 @@ data:
   RDS_CONNECTION_STRING: {{ .Values.configmap.RDS_CONNECTION_STRING }}
   RDS_DB_NAME: {{ .Values.configmap.RDS_DB_NAME }}
   S3_BUCKET_NAME: {{ .Values.configmap.S3_BUCKET_NAME }}
+  REGION: {{ .Values.configmap.REGION }}

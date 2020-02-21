@@ -33,6 +33,16 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.rdscred.name }}-{{ .Release.Name }}
                   key: password
+            - name: AWS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.awscred.name }}-{{ .Release.Name }}
+                  key: aws_key
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.awscred.name }}-{{ .Release.Name }}
+                  key: secret_key
           ports:
             - containerPort: 3000
           readinessProbe:
