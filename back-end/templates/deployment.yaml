@@ -1,0 +1,66 @@
+#Replica set to deploy docker image
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: {{ include "back-end.fullname" . }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "back-end.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "back-end.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "back-end.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.configmap.name }}-{{ .Release.Name }}
+          env:
+            - name: RDS_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.rdscred.name }}-{{ .Release.Name }}
+                  key: username
+            - name: RDS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.rdscred.name }}-{{ .Release.Name }}
+                  key: password
+            - name: AWS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.awscred.name }}-{{ .Release.Name }}
+                  key: aws_key
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.awscred.name }}-{{ .Release.Name }}
+                  key: secret_key
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /howyoudoin
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /howyoudoin
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "250Mi"
+            limits:
+              memory: "500Mi"
+      imagePullSecrets:
+        - name: {{ .Values.secret.regcred.name }}-{{ .Release.Name }}
