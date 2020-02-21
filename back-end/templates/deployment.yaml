@@ -1,9 +1,3 @@
-#Creating Name Space
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ .Values.namespace.name }}
----
 #Replica set to deploy docker image
 apiVersion: apps/v1
 kind: ReplicaSet
@@ -27,17 +21,17 @@ spec:
           image: {{ .Values.image.repository }}
           envFrom:
             - configMapRef:
-                name: {{ .Values.configmap.name }}
+                name: {{ .Values.configmap.name }}-{{ .Release.Name }}
           env:
             - name: RDS_USER_NAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secret.rdscred.name }}
+                  name: {{ .Values.secret.rdscred.name }}-{{ .Release.Name }}
                   key: username
             - name: RDS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secret.rdscred.name }}
+                  name: {{ .Values.secret.rdscred.name }}-{{ .Release.Name }}
                   key: password
           ports:
             - containerPort: 3000
@@ -59,4 +53,4 @@ spec:
             limits:
               memory: "500Mi"
       imagePullSecrets:
-        - name: {{ .Values.secret.regcred.name }}
+        - name: {{ .Values.secret.regcred.name }}-{{ .Release.Name }}

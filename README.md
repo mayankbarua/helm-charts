@@ -14,5 +14,11 @@
 To create back-end replica set
 
 ```bash
-$ helm install --generate-name --set image.repository=baruamayank92/back-end:68d0d3ae99965283edb53a98e5b7295e8e4ddceb,namespace.createNamespace=true,configmap.RDS_CONNECTION_STRING=RDS_NAME  --debug ./back-end/
+$ helm install RELEASENAME --set image.repository=baruamayank92/back-end:68d0d3ae99965283edb53a98e5b7295e8e4ddceb,namespace.createNamespace=true,configmap.RDS_CONNECTION_STRING=RDS_NAME  --debug ./back-end/
+```
+
+To create front-end replica set
+
+```bash
+$ helm install RELEASENAME --set image.repository=baruamayank92/front-end:68d0d3ae99965283edb53a98e5b7295e8e4ddceb,namespace.createNamespace=true,intiContainer.backendDependencyEndpoint=RELEASENAME-back-end.api.svc.cluster.local  --debug ./front-end/
 ```

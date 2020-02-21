@@ -1,0 +1,46 @@
+#Replica set to deploy docker image
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: {{ include "front-end.fullname" . }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "front-end.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "front-end.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "front-end.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.configmap.name }}-{{ .Release.Name }}
+          ports:
+            - containerPort: {{ .Values.container.port }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.container.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.container.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+      initContainers:
+        - name: init-backendservice
+          image: {{ .Values.intiContainer.image.repository }}
+          command: ['sh', '-c', 'until nslookup {{ .Values.intiContainer.backendDependencyEndpoint }} ; do echo waiting for apiservice.api; sleep 2; done;']
+      imagePullSecrets:
+        - name: {{ .Values.secret.regcred.name }}-{{ .Release.Name }}
