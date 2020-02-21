@@ -14,6 +14,6 @@
 To create Frontend and Backend charts
 
 ```bash
-$ ansible-playbook -vvv create_helm_charts.yml --extra-vars "backendReleaseName=value imageBackend=value rdsConnection=value bucketName=value awsKey=value secretKey=value imageFrontend=value frontendReleaseName=value"
+$ ansible-playbook -vvv create_helm_charts.yml --extra-vars "backendReleaseName=value imageBackend=value rdsConnection=value bucketName=value awsKey=value secretKey=value imageFrontend=value frontendReleaseName=value dockerString=value"
 ```
 
