@@ -54,7 +54,7 @@ secret:
   regcred:
     name: regcred
     type: kubernetes.io/dockerconfigjson
-    dockerconfigjson: YOUR_DOCKER_SECRET
+    dockerconfigjson:
   rdscred:
     name: rdscred
     type: Opaque
