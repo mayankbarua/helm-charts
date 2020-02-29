@@ -5,7 +5,7 @@
   shell: "kubectl create namespace api --dry-run -o yaml | kubectl apply -f -"
 
 - name: Run backend Helm chart
-  shell: "helm install {{ backendReleaseName }} --namespace=api --set image.repository={{ imageBackend }},configmap.RDS_CONNECTION_STRING={{ rdsConnection }},configmap.S3_BUCKET_NAME={{ bucketName }},secret.awscred.aws_key={{ awsKey }},secret.awscred.secret_key={{ secretKey }},secret.regcred.dockerconfigjson={{ dockerString }},redis.sentinel.enabled={{ redis_sentinel_enabled }},redis.cluster.enabled={{ redis_cluster_enabled }},redis.password={{ redis_password }},secret.redis.password={{ redis_password }},configmap.REDIS_SENTINEL_HOSTNAME={{ backendReleaseName }}-redis.api.svc.cluster.local --debug ./back-end/"
+  shell: "helm install {{ backendReleaseName }} --namespace=api --set image.repository={{ imageBackend }},configmap.RDS_CONNECTION_STRING={{ rdsConnection }},configmap.S3_BUCKET_NAME={{ bucketName }},secret.awscred.aws_key={{ awsKey }},secret.awscred.secret_key={{ secretKey }},secret.regcred.dockerconfigjson={{ dockerString }},redis.sentinel.enabled={{ redis_sentinel_enabled }},redis.cluster.enabled={{ redis_cluster_enabled }},redis.password={{ redis_password }},secret.redis.password={{ redis_password }},configmap.REDIS_SENTINEL_HOSTNAME={{ backendReleaseName }}-redis.api.svc.cluster.local,master.readinessProbe.failureThreshold={{ readinessProbe_failureThreshold }} --debug ./back-end/"
 
 - name: Get Backend service ip
   shell: "kubectl describe services {{ backendReleaseName }}-back-end --namespace=api | grep elb.amazonaws.com | grep LoadBalancer | awk '{print $3}'"
