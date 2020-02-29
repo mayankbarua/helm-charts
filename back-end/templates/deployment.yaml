@@ -58,14 +58,14 @@ spec:
             httpGet:
               path: /howyoudoin
               port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 20
+            periodSeconds: 20
           livenessProbe:
             httpGet:
               path: /redisLivenessCheck
               port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 20
+            periodSeconds: 20
           resources:
             requests:
               memory: "250Mi"
