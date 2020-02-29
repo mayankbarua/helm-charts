@@ -10,3 +10,6 @@ data:
   RDS_DB_NAME: {{ .Values.configmap.RDS_DB_NAME }}
   S3_BUCKET_NAME: {{ .Values.configmap.S3_BUCKET_NAME }}
   REGION: {{ .Values.configmap.REGION }}
+  REDIS_SENTINEL_HOSTNAME: {{ .Values.configmap.REDIS_SENTINEL_HOSTNAME }}
+  REDIS_MASTERNAME: {{ .Values.configmap.REDIS_MASTERNAME }}
+  REDIS_SENTINEL_PORT: {{ .Values.configmap.REDIS_SENTINEL_PORT | quote }}

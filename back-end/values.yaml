@@ -49,6 +49,9 @@ configmap:
   RDS_DB_NAME: thunderstorm
   S3_BUCKET_NAME:
   REGION: us-east-1
+  REDIS_SENTINEL_HOSTNAME:
+  REDIS_MASTERNAME: mymaster
+  REDIS_SENTINEL_PORT: 26379
 
 secret:
   regcred:
@@ -65,8 +68,10 @@ secret:
     type: Opaque
     aws_key:
     secret_key:
-
-
+  redis:
+    name: redis
+    type: Opaque
+    password:
 
 ingress:
   enabled: false

@@ -16,6 +16,10 @@ spec:
       labels:
         {{- include "back-end.selectorLabels" . | nindent 8 }}
     spec:
+      initContainers:
+        - name: init-redis
+          image: busybox
+          command: ['sh', '-c', 'until nslookup {{ .Values.configmap.REDIS_SENTINEL_HOSTNAME }} ; do echo waiting for {{ .Values.configmap.REDIS_SENTINEL_HOSTNAME }}; sleep 2; done;']
       containers:
         - name: {{ .Chart.Name }}
           image: {{ .Values.image.repository }}
@@ -43,20 +47,25 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.awscred.name }}-{{ .Release.Name }}
                   key: secret_key
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.redis.name }}-{{ .Release.Name }}
+                  key: password
           ports:
             - containerPort: 3000
           readinessProbe:
             httpGet:
               path: /howyoudoin
               port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 20
+            periodSeconds: 20
           livenessProbe:
             httpGet:
-              path: /howyoudoin
+              path: /redisLivenessCheck
               port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            initialDelaySeconds: 20
+            periodSeconds: 20
           resources:
             requests:
               memory: "250Mi"
