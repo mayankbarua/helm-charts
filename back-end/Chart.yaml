@@ -12,6 +12,12 @@ description: A node js application
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
 
+# Redis dependency
+dependencies:
+  - name: redis
+    version: 10.5.5
+    repository: https://kubernetes-charts.storage.googleapis.com
+
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 version: 0.1.0
