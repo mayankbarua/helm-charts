@@ -15,6 +15,9 @@ spec:
     metadata:
       labels:
         {{- include "back-end.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '3000'  
     spec:
       initContainers:
         - name: init-redis
