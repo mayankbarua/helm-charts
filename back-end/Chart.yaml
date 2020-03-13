@@ -1,7 +1,6 @@
 apiVersion: v2
 name: back-end
 description: A node js application
-
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -11,29 +10,25 @@ description: A node js application
 # a dependency of application charts to inject those utilities and functions into the rendering
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
-
 # Redis dependency
 dependencies:
-  - name: redis
-    version: 10.5.5
-    repository: https://kubernetes-charts.storage.googleapis.com
-
+- name: redis
+  version: 10.5.5
+  repository: https://kubernetes-charts.storage.googleapis.com
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.1.0
-
+version: 0.1.4
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-
 sources:
-  - https://github.com/csye7374-Advance-Cloud/helm-charts
+- https://github.com/csye7374-Advance-Cloud/helm-charts
 maintainers:
-  - name: mayankbarua
-    email: barua.m@husky.neu.edu
-  - name:  JainPrajesh
-    email: Jain.pra@husky.neu.edu
-  - name: Jagman13
-    email: kaur.j@husky.neu.edu
-  - name: yogitapatilneu
-    email: patil.yo@husky.neu.edu
+- name: mayankbarua
+  email: barua.m@husky.neu.edu
+- name: JainPrajesh
+  email: Jain.pra@husky.neu.edu
+- name: Jagman13
+  email: kaur.j@husky.neu.edu
+- name: yogitapatilneu
+  email: patil.yo@husky.neu.edu
 appVersion: 1.16.0
