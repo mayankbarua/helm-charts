@@ -20,6 +20,9 @@ intiContainer:
     repository: busybox
   backendDependencyEndpoint:
 
+deployment:
+  type: RollingUpdate
+
 resources:
   requests:
     memory: "250Mi"
