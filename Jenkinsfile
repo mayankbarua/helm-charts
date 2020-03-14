@@ -9,12 +9,12 @@
     6. Optionally deploy to production and test
  */
 
+
 /*
     Create the kubernetes namespace
  */
 def createNamespace (name) {
     echo "Creating namespace ${name} if needed"
-
     sh "kubectl create namespace ${name} --dry-run -o yaml | kubectl apply -f -"
 }
 
@@ -45,12 +45,13 @@ def helmInstallFrontend (frontendReleaseName, backendReleaseName) {
     }
 }
 
-
 node {
      def backendIp
      def changedFiles
      def backendReleaseName = "backend"
      def frontendReleaseName = "frontend"
+     def kubernetesCredentials = 'KubeCreds'
+
     stage('Clone repository') {
         /* Cloning the Repository to our Workspace */
                 checkout scm
@@ -60,32 +61,48 @@ node {
             }
 
     stage('Startup activities'){
-     sh "kubectl cluster-info"
+    echo "${env.ServerUrl}"
+    withKubeConfig([credentialsId: kubernetesCredentials,
+                        serverUrl: "${env.ServerUrl}"
+                        ]) {
+          sh "kubectl cluster-info"
+    }
+
 
      // Init helm client
      sh "helm init"
     }
 
-     stage('Deploy Backend'){
-        if (changedFiles?.trim().contains("back-end"))
-         {
-            echo "Deploying backend"
-            createNamespace('api')
-            helmInstallBackend(backendReleaseName)
-        }else{
-            echo "Nothing to deploy in backend"
-        }
-      }
+         stage('Deploy Backend'){
+            if (changedFiles?.trim().contains("back-end"))
+             {
+                echo "Deploying backend"
+                withKubeConfig([credentialsId: kubernetesCredentials,
+                                 serverUrl: "${env.ServerUrl}"
+                              ]) {
+                       createNamespace('api')
+                       helmInstallBackend(backendReleaseName)
+                }
 
-     stage('Deploy Frontend'){
-        if (changedFiles?.trim().contains("front-end"))
-        {
-          echo "Deploying frontend"
-          createNamespace('ui')
-          helmInstallFrontend(frontendReleaseName, backendReleaseName)
-        }
-        else{
-            echo "Nothing to deploy in frontend"
-        }
-     }
+            }else{
+                echo "Nothing to deploy in backend"
+            }
+          }
+
+         stage('Deploy Frontend'){
+            if (changedFiles?.trim().contains("front-end"))
+            {
+              echo "Deploying frontend"
+              withKubeConfig([credentialsId: kubernetesCredentials,
+                                 serverUrl: "${env.ServerUrl}"
+                              ]) {
+               createNamespace('ui')
+               helmInstallFrontend(frontendReleaseName, backendReleaseName)
+              }
+            }
+            else{
+                echo "Nothing to deploy in frontend"
+            }
+         }
+
  }
