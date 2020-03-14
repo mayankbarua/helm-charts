@@ -26,7 +26,7 @@ def helmInstallBackend (backendReleaseName) {
 
     script {
        // sh "helm repo add helm ${HELM_REPO}; helm repo update"
-       sh "helm upgrade --install ${backendReleaseName} --namespace=api --set configmap.RDS_CONNECTION_STRING=${env.rdsString},configmap.S3_BUCKET_NAME=${env.S3BucketName},secret.awscred.aws_key=${env.awsKey},secret.awscred.secret_key=${env.awsSecret},secret.regcred.dockerconfigjson=${env.dockerString},redis.sentinel.enabled=${env.redisSentinel},redis.cluster.enabled=${env.redisCluster},redis.password=${env.redisPassword},secret.redis.password=${env.redisPassword},configmap.REDIS_SENTINEL_HOSTNAME=${backendReleaseName}-redis.api.svc.cluster.local --debug ./back-end/"
+       sh "helm upgrade --install ${backendReleaseName} --namespace=api --set configmap.RDS_CONNECTION_STRING=${env.rdsString},configmap.S3_BUCKET_NAME=${env.S3BucketName},secret.awscred.aws_key=${env.awsKey},secret.awscred.secret_key=${env.awsSecret},secret.regcred.dockerconfigjson=${env.dockerString},redis.sentinel.enabled=${env.redisSentinel},redis.cluster.enabled=${env.redisCluster},redis.password=${env.redisPassword},secret.redis.password=${env.redisPassword},configmap.REDIS_SENTINEL_HOSTNAME=${backendReleaseName}-redis.api.svc.cluster.local,redis_metrics_enabled=true --debug ./back-end/"
     }
 }
 
