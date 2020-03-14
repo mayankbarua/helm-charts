@@ -21,40 +21,42 @@ def createNamespace (name) {
 /*
     Helm install Backend application
 */
-def helmInstallBackend () {
+def helmInstallBackend (backendReleaseName) {
     echo "Installing backend application"
 
     script {
-        backendReleaseName = "backend"
        // sh "helm repo add helm ${HELM_REPO}; helm repo update"
        sh "helm upgrade --install ${backendReleaseName} --namespace=api --set configmap.RDS_CONNECTION_STRING=${env.rdsString},configmap.S3_BUCKET_NAME=${env.S3BucketName},secret.awscred.aws_key=${env.awsKey},secret.awscred.secret_key=${env.awsSecret},secret.regcred.dockerconfigjson=${env.dockerString},redis.sentinel.enabled=${env.redisSentinel},redis.cluster.enabled=${env.redisCluster},redis.password=${env.redisPassword},secret.redis.password=${env.redisPassword},configmap.REDIS_SENTINEL_HOSTNAME=${backendReleaseName}-redis.api.svc.cluster.local --debug ./back-end/"
-       sh "sleep 50"
-       echo "Finding backendip"
-       backendIp = sh(returnStdout: true, script: "kubectl describe services backend-back-end --namespace=api | grep elb.amazonaws.com | grep LoadBalancer | awk '{print \$3}' | tr -d '\n'")
-       echo "${backendIp}"
     }
 }
 
 /*
     Helm install Frontend application
 */
-def helmInstallFrontend () {
+def helmInstallFrontend (frontendReleaseName, backendReleaseName) {
     echo "Installing frontend application"
 
     script {
-       frontendReleaseName = "frontend"
+       sh "sleep 50"
+       echo "Finding backendip"
+       backendIp = sh(returnStdout: true, script: "kubectl describe services backend-back-end --namespace=api | grep elb.amazonaws.com | grep LoadBalancer | awk '{print \$3}' | tr -d '\n'")
+       echo "${backendIp}"
        sh "helm upgrade --install ${frontendReleaseName} --namespace=ui --set intiContainer.backendDependencyEndpoint=${backendReleaseName}-back-end.api.svc.cluster.local,configmap.backendIp='http://${backendIp}:3000',secret.regcred.dockerconfigjson=${env.dockerString} --debug ./front-end/"
-       sh "sleep 5"
     }
 }
 
 
 node {
      def backendIp
-
+     def changedFiles
+     def backendReleaseName = "backend"
+     def frontendReleaseName = "frontend"
     stage('Clone repository') {
         /* Cloning the Repository to our Workspace */
                 checkout scm
+                sh 'git diff --name-only --diff-filter=ADMR @~..@ > output.txt'
+                changedFiles = readFile 'output.txt'
+                echo "Changed files - ${changedFiles}"
             }
 
     stage('Startup activities'){
@@ -65,12 +67,25 @@ node {
     }
 
      stage('Deploy Backend'){
-       createNamespace('api')
-       helmInstallBackend()
+        if (changedFiles?.trim().contains("back-end"))
+         {
+            echo "Deploying backend"
+            createNamespace('api')
+            helmInstallBackend(backendReleaseName)
+        }else{
+            echo "Nothing to deploy in backend"
+        }
       }
 
      stage('Deploy Frontend'){
-      createNamespace('ui')
-      helmInstallFrontend()
+        if (changedFiles?.trim().contains("front-end"))
+        {
+          echo "Deploying frontend"
+          createNamespace('ui')
+          helmInstallFrontend(frontendReleaseName, backendReleaseName)
+        }
+        else{
+            echo "Nothing to deploy in frontend"
+        }
      }
  }
