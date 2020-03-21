@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+domainname:
 namespace:
   name: ui
   createNamespace:
@@ -44,7 +45,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name:
+  name: readfrontend
 podSecurityContext: {}
 # fsGroup: 2000
 

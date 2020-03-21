@@ -21,6 +21,7 @@ spec:
       labels:
         {{- include "front-end.selectorLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ .Release.Name }}-{{ template "front-end.serviceAccountName" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: {{ .Values.image.repository }}

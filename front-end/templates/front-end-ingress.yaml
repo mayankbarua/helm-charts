@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: {{ .Values.namespace.name }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+spec:
+  rules:
+    - host: frontend.{{ .Values.domainname }}
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: {{ .Release.Name }}-front-end
+            servicePort: 4000
+  tls:
+  - hosts:
+    - frontend.{{ .Values.domainname }}
+    secretName: frontend-tls-cert

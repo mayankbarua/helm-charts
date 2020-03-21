@@ -5,21 +5,14 @@
   shell: "kubectl create namespace api --dry-run -o yaml | kubectl apply -f -"
 
 - name: Run backend Helm chart
-  shell: "helm install {{ backendReleaseName }} --namespace=api --set image.repository={{ imageBackend }},configmap.RDS_CONNECTION_STRING={{ rdsConnection }},configmap.S3_BUCKET_NAME={{ bucketName }},secret.awscred.aws_key={{ awsKey }},secret.awscred.secret_key={{ secretKey }},secret.regcred.dockerconfigjson={{ dockerString }},redis.sentinel.enabled={{ redis_sentinel_enabled }},redis.cluster.enabled={{ redis_cluster_enabled }},redis.password={{ redis_password }},secret.redis.password={{ redis_password }},configmap.REDIS_SENTINEL_HOSTNAME={{ backendReleaseName }}-redis.api.svc.cluster.local,master.readinessProbe.failureThreshold={{ readinessProbe_failureThreshold }},redis.metrics.enabled={{redis_metrics_enabled }} --debug ./back-end/"
-
-- name: Get Backend service ip
-  shell: "kubectl describe services {{ backendReleaseName }}-back-end --namespace=api | grep elb.amazonaws.com | grep LoadBalancer | awk '{print $3}'"
-  register: backendip
-  until: backendip.stdout |length > 0
-  retries: 5
-  delay: 10
+  shell: "helm install {{ backendReleaseName }} --namespace=api --set image.repository={{ imageBackend }},configmap.RDS_CONNECTION_STRING={{ rdsConnection }},configmap.S3_BUCKET_NAME={{ bucketName }},secret.awscred.aws_key={{ awsKey }},secret.awscred.secret_key={{ secretKey }},secret.regcred.dockerconfigjson={{ dockerString }},redis.sentinel.enabled={{ redis_sentinel_enabled }},redis.cluster.enabled={{ redis_cluster_enabled }},redis.password={{ redis_password }},secret.redis.password={{ redis_password }},configmap.REDIS_SENTINEL_HOSTNAME={{ backendReleaseName }}-redis.api.svc.cluster.local,master.readinessProbe.failureThreshold={{ readinessProbe_failureThreshold }},redis.metrics.enabled={{redis_metrics_enabled }},domainname={{ domainname }} --debug ./back-end/"
 
 - name: Configure backend url
   set_fact:
-    backendurl: "http://{{ backendip.stdout }}:3000"
+    backendurl: "https://backend.{{ domainname }}"
 
 - name: Create frontend namespace
   shell: "kubectl create namespace ui --dry-run -o yaml | kubectl apply -f -"
 
 - name: Run frontend Helm Chart
-  shell: "helm install {{ frontendReleaseName }} --namespace=ui --set image.repository={{ imageFrontend }},intiContainer.backendDependencyEndpoint={{ backendReleaseName }}-back-end.api.svc.cluster.local,configmap.backendIp={{ backendurl }},secret.regcred.dockerconfigjson={{ dockerString }} --debug ./front-end/"
+  shell: "helm install {{ frontendReleaseName }} --namespace=ui --set image.repository={{ imageFrontend }},intiContainer.backendDependencyEndpoint={{ backendReleaseName }}-back-end.api.svc.cluster.local,configmap.backendIp={{ backendurl }},secret.regcred.dockerconfigjson={{ dockerString }},domainname={{ domainname }} --debug ./front-end/"
