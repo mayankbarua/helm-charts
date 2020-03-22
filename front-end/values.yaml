@@ -7,7 +7,7 @@ namespace:
   createNamespace:
 replicaCount: 3
 image:
-  repository: baruamayank92/front-end:09e44e7a42c4cebcbf5a12a29fadafffe814a4fa
+  repository: baruamayank92/front-end:2b69d92614dd8ee44f3e1acfd035c8b318a62a3a
   pullPolicy: IfNotPresent
 container:
   port: 4000
