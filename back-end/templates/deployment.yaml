@@ -77,7 +77,9 @@ spec:
           resources:
             requests:
               memory: "250Mi"
+              cpu: 200m
             limits:
               memory: "500Mi"
+              cpu: 500m
       imagePullSecrets:
         - name: {{ .Values.secret.regcred.name }}-{{ .Release.Name }}
