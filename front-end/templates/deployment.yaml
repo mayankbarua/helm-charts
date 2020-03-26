@@ -30,6 +30,10 @@ spec:
           ports:
             - containerPort: {{ .Values.container.port }}
           resources:
+            requests:
+              cpu: 200m
+            limits:
+              cpu: 500m
             {{- toYaml .Values.resources | nindent 12 }}
           readinessProbe:
             httpGet:
