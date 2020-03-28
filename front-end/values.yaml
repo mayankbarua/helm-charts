@@ -5,7 +5,7 @@
 namespace:
   name: ui
   createNamespace:
-replicaCount: 3
+replicaCount: 2
 image:
   repository: yogitapatil/front_end:b7e814888dde6eb94f3503479da653ec4959b558
   pullPolicy: IfNotPresent
